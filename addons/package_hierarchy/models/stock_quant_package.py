@@ -24,7 +24,7 @@ class QuantPackage(models.Model):
         ondelete="restrict",
         help="The package containing this item",
     )
-    top_parent_id = fields.One2many(
+    top_parent_id = fields.Many2one(
         "stock.quant.package", compute="_compute_top_parent_id", store=True
     )
 
@@ -74,7 +74,7 @@ class QuantPackage(models.Model):
     @api.constrains("parent_id")
     def _check_package_recursion(self):
         if not self._check_recursion("parent_id"):
-            raise ValidationError("A package cannot be its own parent.")
+            raise ValidationError("A package cannot be its own ancestor.")
 
     def _check_not_multi_location(self):
         for package in self:
@@ -89,16 +89,19 @@ class QuantPackage(models.Model):
         "parent_id", "children_ids", "quant_ids.package_id",
     )
     def _compute_children_quant_ids(self):
-        for package in self.filtered(lambda p: not isinstance(p.id, models.NewId)):
-            package._check_not_multi_location()
-            package.children_quant_ids = self.env["stock.quant"].search(
-                [
-                    ("package_id", "child_of", package.id),
-                    "|",
-                    ("quantity", "!=", 0),
-                    ("reserved_quantity", "!=", 0),
-                ]
-            )
+        for package in self:
+            if isinstance(package.id, models.NewId):
+                package.children_quant_ids = []
+            else:
+                package._check_not_multi_location()
+                package.children_quant_ids = self.env["stock.quant"].search(
+                    [
+                        ("package_id", "child_of", package.id),
+                        "|",
+                        ("quantity", "!=", 0),
+                        ("reserved_quantity", "!=", 0),
+                    ]
+                )
 
     @api.depends(
         "quant_ids.package_id",

@@ -31,6 +31,6 @@ class StockMoveLine(models.Model):
         packages = Package.search([("id", "parent_of", self.mapped("package_id").ids)])
         packages_fulfilled = packages.filtered(lambda p: p.is_fulfilled_by(self))
         top_level_packages = packages_fulfilled.filtered(
-            lambda p: p.parent_id not in packages_fulfilled
+            lambda p: p.parent_id and p.parent_id not in packages_fulfilled
         )
         PackageHierarchyLink.create_top_level_unlinks(top_level_packages, self)

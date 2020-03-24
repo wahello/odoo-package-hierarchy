@@ -6,7 +6,7 @@ from odoo import fields, models
 class StockWarehouse(models.Model):
     _inherit = "stock.warehouse"
 
-    max_package_depth = fields.Integer(
+    u_max_package_depth = fields.Integer(
         "Maximum Package Depth",
         default=2,
         help=(
