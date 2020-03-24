@@ -14,6 +14,9 @@ class PackageHierarchyLink(models.Model):
 
     name = fields.Char(index=True, store=True, compute="_compute_name")
     parent_path = fields.Char(index=True)
+    parent_left = fields.Integer('Left Parent', index=True)
+    parent_right = fields.Integer('Left Parent', index=True)
+
     parent_id = fields.Many2one(
         "stock.quant.package", string="Parent package", ondelete="cascade", check_company=True
     )
