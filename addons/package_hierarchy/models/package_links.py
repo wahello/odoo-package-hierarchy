@@ -61,6 +61,8 @@ class PackageHierarchyLink(models.Model):
             return self.create(link_vals)
         return self.browse()
 
+
+
     @api.depends("parent_id", "child_id")
     def _compute_name(self):
         for link in self.filtered(lambda p: not isinstance(p.id, models.NewId)):
@@ -69,7 +71,3 @@ class PackageHierarchyLink(models.Model):
                 if link.parent_id and link.child_id
                 else "Unlink parent of %s" % link.child_id.name
             )
-
-    def _compute_would_be_depth(self):
-        # TODO by checking children and parent pairs
-        pass

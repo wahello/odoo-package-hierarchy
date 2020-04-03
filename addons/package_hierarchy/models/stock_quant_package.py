@@ -85,6 +85,26 @@ class QuantPackage(models.Model):
                     % (package.name, ", ".join([l.name for l in locations]))
                 )
 
+    def _return_num_ancestors(self):
+        self.ensure_one()
+        parent = self.parent_id
+
+        if not parent:
+            return 0
+        else:
+            return parent._return_num_ancestors() + 1
+
+    def _return_ancestors(self):
+        self.ensure_one()
+        ancestors = []
+        parent = self.parent_id
+
+        while parent:
+            ancestors.append(parent)
+            parent = parent.parent_id
+
+        return ancestors
+
     @api.depends(
         "parent_id", "children_ids", "quant_ids.package_id",
     )

@@ -11,6 +11,12 @@
             <xpath expr="//button[@name='put_in_pack']" position="replace" />
             <xpath expr="//button[@name='put_in_pack']" position="replace" />
 
+            <!-- Overwrite detailed operations for moving without package
+            -->
+            <xpath expr="//notebook/page/field[@name='move_line_ids_without_package']" position="attributes">
+                <attribute name="name">move_line_ids</attribute>
+            </xpath>
+
         </field>
     </record>
 </odoo>
